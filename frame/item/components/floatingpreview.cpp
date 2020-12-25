@@ -176,8 +176,10 @@ bool FloatingPreview::eventFilter(QObject *watched, QEvent *event)
         }
     }
 
-    if (watched == m_tracked && event->type() == QEvent::Destroy)
+    if (watched == m_tracked && event->type() == QEvent::Destroy) {
+        m_tracked = nullptr;
         hide();
+    }
 
     return QWidget::eventFilter(watched, event);
 }
