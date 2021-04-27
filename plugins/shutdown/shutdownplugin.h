@@ -112,6 +112,8 @@ private:
     ShutdownWidget *m_shutdownWidget;
     Dock::TipsWidget *m_tipsLabel;
     DBusLogin1Manager* m_login1Inter;
+    bool m_powerSettingsVisible;
+    bool m_isLockVisbile;
 };
 
 #endif // SHUTDOWNPLUGIN_H

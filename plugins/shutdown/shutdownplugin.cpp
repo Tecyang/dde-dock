@@ -26,6 +26,7 @@
 
 #include <QIcon>
 #include <QSettings>
+#include <QGSettings>
 
 #define PLUGIN_STATE_KEY    "enable"
 
@@ -41,6 +42,10 @@ ShutdownPlugin::ShutdownPlugin(QObject *parent)
 {
     m_tipsLabel->setVisible(false);
     m_tipsLabel->setAccessibleName("shutdown");
+
+    QGSettings *setting = new QGSettings("com.deepin.dde.dock");
+    m_powerSettingsVisible = setting->get("plugin-in").toBool();
+    m_isLockVisbile = setting->get("islockvisbile").toBool();
 }
 
 const QString ShutdownPlugin::pluginName() const
@@ -150,11 +155,13 @@ const QString ShutdownPlugin::itemContextMenu(const QString &itemKey)
 
 #endif
 
-    QMap<QString, QVariant> lock;
-    lock["itemId"] = "Lock";
-    lock["itemText"] = tr("Lock");
-    lock["isActive"] = true;
-    items.push_back(lock);
+    if (m_isLockVisbile) {
+        QMap<QString, QVariant> lock;
+        lock["itemId"] = "Lock";
+        lock["itemText"] = tr("Lock");
+        lock["isActive"] = true;
+        items.push_back(lock);
+    }
 
     QMap<QString, QVariant> logout;
     logout["itemId"] = "Logout";
@@ -172,11 +179,13 @@ const QString ShutdownPlugin::itemContextMenu(const QString &itemKey)
         }
 
 #ifndef DISABLE_POWER_OPTIONS
-        QMap<QString, QVariant> power;
-        power["itemId"] = "power";
-        power["itemText"] = tr("Power settings");
-        power["isActive"] = true;
-        items.push_back(power);
+        if (m_powerSettingsVisible) {
+            QMap<QString, QVariant> power;
+            power["itemId"] = "power";
+            power["itemText"] = tr("Power settings");
+            power["isActive"] = true;
+            items.push_back(power);
+        }
 #endif
     }
 
